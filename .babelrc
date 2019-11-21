@@ -1,0 +1,11 @@
+{
+    "presets": ["next/bale"],
+    "plugins": [
+        [
+            "import",
+            {
+                "libraryName": "antd"
+            }
+        ]
+    ]
+}
