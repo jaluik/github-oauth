@@ -1,5 +1,5 @@
 {
-    "presets": ["next/bale"],
+    "presets": ["next/babel"],
     "plugins": [
         [
             "import",
