@@ -11,8 +11,16 @@ app.prepare().then(() => {
     const server = new Koa()
     const router = new Router()
 
-    server.use(async (ctx, next) => {
-        await next()
+    router.get('/a/:id', async ctx => {
+        const id = ctx.params.id
+        console.log('...')
+        await handle(ctx.req, ctx.res, {
+            pathname: '/a/',
+            query: {
+                id,
+            },
+        })
+        ctx.respond = false
     })
 
     server.use(router.routes())
