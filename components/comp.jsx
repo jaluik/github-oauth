@@ -1,1 +1,6 @@
-export default ({ children }) => <button>{children}</button>
+export default ({ children }) => (
+    <>
+        <div>lazy Component</div>
+        <button>{children}</button>
+    </>
+)

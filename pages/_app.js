@@ -19,6 +19,7 @@ class MyApp extends App {
         const { Component, pageProps, a } = this.props
         return (
             <Layout>
+                <h1>{this.props.title}</h1>
                 <Component {...pageProps} a={a} />
             </Layout>
         )

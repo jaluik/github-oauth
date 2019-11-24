@@ -1,8 +1,16 @@
-import Comp from '../components/comp'
 import { withRouter } from 'next/router'
+import styled from 'styled-components'
+import dynamic from 'next/dynamic'
 
-const A = ({ router, name, a }) => (
+const Comp = dynamic(import('../components/comp'))
+
+const Title = styled.h1`
+    color: yellow;
+    font-size: 25px;
+`
+const A = ({ router, name, a, time }) => (
     <>
+        <Title>styled-title {time}</Title>
         <Comp>
             A {name} {a}
         </Comp>
@@ -22,10 +30,12 @@ const A = ({ router, name, a }) => (
 )
 
 A.getInitialProps = async () => {
+    const moment = await import('moment')
     const promise = new Promise((res, rej) => {
         setTimeout(() => {
             res({
                 name: 'jaluik',
+                time: moment.default(Date.now() - 60 * 1000).fromNow(),
             })
         }, 1000)
     })

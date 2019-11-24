@@ -13,7 +13,6 @@ app.prepare().then(() => {
 
     router.get('/a/:id', async ctx => {
         const id = ctx.params.id
-        console.log('...')
         await handle(ctx.req, ctx.res, {
             pathname: '/a/',
             query: {
@@ -23,12 +22,12 @@ app.prepare().then(() => {
         ctx.respond = false
     })
 
-    server.use(router.routes())
-
     server.use(async (ctx, next) => {
         await handle(ctx.req, ctx.res)
         ctx.respond = false
+        await next()
     })
+    server.use(router.routes())
 
     server.listen(3000, () => {
         console.log('server is listening on port 3000')
