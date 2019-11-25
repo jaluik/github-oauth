@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Router from 'next/router'
-import { Button } from 'antd'
+import store from '../store/store'
 
 const events = [
     'routeChangeStart',
