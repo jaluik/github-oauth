@@ -1,13 +1,14 @@
 import App from 'next/app'
 import Layout from '../components/Layout'
 import { Provider } from 'react-redux'
-
-import store from '../store/store'
+import testHoc from '../lib/with-redux'
 
 import 'antd/dist/antd.css'
 
 class MyApp extends App {
-    static async getInitialProps({ Component, ctx }) {
+    static async getInitialProps(ctx) {
+        const { Component } = ctx
+
         let pageProps
         if (Component.getInitialProps) {
             pageProps = await Component.getInitialProps(ctx)
@@ -19,10 +20,10 @@ class MyApp extends App {
     }
 
     render() {
-        const { Component, pageProps, a } = this.props
+        const { Component, pageProps, a, reduxStore } = this.props
         return (
             <>
-                <Provider store={store}>
+                <Provider store={reduxStore}>
                     <Layout>
                         <h1>{this.props.title}</h1>
                         <Component {...pageProps} a={a} />
@@ -32,4 +33,4 @@ class MyApp extends App {
         )
     }
 }
-export default MyApp
+export default testHoc(MyApp)

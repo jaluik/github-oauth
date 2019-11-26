@@ -1,5 +1,6 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import ReduxThunk from 'redux-thunk'
+import { composeWithDevTools } from 'redux-devtools-extension'
 
 const initialState = {
     count: 1,
@@ -38,16 +39,7 @@ const reducers = combineReducers({
     user: userReducer,
 })
 
-const store = createStore(
-    reducers,
-    {
-        count: initialState,
-        user: userInitialState,
-    },
-    applyMiddleware(ReduxThunk)
-)
-
-function add(num) {
+export function add(num) {
     return {
         type: ADD,
         num,
@@ -65,14 +57,15 @@ function addAsync(num) {
     }
 }
 
-store.dispatch(add(3))
-
-store.subscribe(() => {
-    console.log(store.getState())
-})
-
-store.dispatch(addAsync(4))
-
-console.log(store.getState())
-
-export default store
+export default state => {
+    const store = createStore(
+        reducers,
+        {
+            count: initialState,
+            user: userInitialState,
+            ...state,
+        },
+        composeWithDevTools(applyMiddleware(ReduxThunk))
+    )
+    return store
+}
