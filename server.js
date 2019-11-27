@@ -4,6 +4,7 @@ const Router = require('koa-router')
 const session = require('koa-session')
 const RedisSessionStore = require('./server/session-store')
 const Redis = require('ioredis')
+const auth = require('./server/auth')
 
 const dev = process.env.NODE_PAHT !== 'production'
 const app = next({ dev })
@@ -23,6 +24,8 @@ app.prepare().then(() => {
     }
 
     server.use(session(SESSION_CONFIG, server))
+    // 配置处理github-oauth登录
+    auth(server)
     server.use(async (ctx, next) => {
         //     // console.log(ctx.cookies.get('id'))
 
@@ -45,19 +48,17 @@ app.prepare().then(() => {
         })
         ctx.respond = false
     })
-
-    router.get('/set/user', async ctx => {
-        ctx.session.user = {
-            name: 'jaluik',
-            age: 18,
+    router.get('/api/user/info', async ctx => {
+        const user = ctx.session.userInfo
+        if (!user) {
+            ctx.status = 401
+            ctx.body = 'Need Login'
+        } else {
+            ctx.body = user
+            ctx.set('Content-type', 'application/json')
         }
-        ctx.body = 'set session success'
     })
 
-    router.get('/del/user', async ctx => {
-        ctx.session = null
-        ctx.body = 'del session success'
-    })
     server.use(router.routes())
 
     server.use(async (ctx, next) => {

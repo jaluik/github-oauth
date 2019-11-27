@@ -1,4 +1,5 @@
 const WithCss = require('@zeit/next-css')
+const myConfig = require('./config')
 
 const config = {
     //输出文件的路由生成Etag
@@ -48,4 +49,12 @@ if (typeof require !== undefined) {
     require.extensions['.css'] = file => {}
 }
 
-module.exports = WithCss({})
+const GITHUB_OAUTH_URL = 'https://github.com/login/oauth/authorize'
+const SCOPE = 'user'
+
+module.exports = WithCss({
+    publicRuntimeConfig: {
+        GITHUB_OAUTH_URL,
+        OAUTH_URL: `${GITHUB_OAUTH_URL}?client_id=${myConfig.github.client_id}&scope=${SCOPE}`,
+    },
+})
