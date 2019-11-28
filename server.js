@@ -26,6 +26,7 @@ app.prepare().then(() => {
     server.use(session(SESSION_CONFIG, server))
     // 配置处理github-oauth登录
     auth(server)
+
     server.use(async (ctx, next) => {
         //     // console.log(ctx.cookies.get('id'))
 

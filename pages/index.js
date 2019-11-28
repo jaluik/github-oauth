@@ -27,7 +27,10 @@ events.forEach(e => {
 
 const Index = ({ count, name, add, rename }) => {
     useEffect(() => {
-        axios.get('/api/user/info').then(res => console.log(res))
+        axios
+            .get('/api/user/info')
+            .then(res => console.log(res))
+            .catch(e => console.log(e))
     }, [])
     return (
         <>

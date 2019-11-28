@@ -21,6 +21,7 @@ module.exports = server => {
                         Accept: 'application/json',
                     },
                 })
+
                 if (
                     result.status === 200 &&
                     result.data &&
@@ -31,11 +32,10 @@ module.exports = server => {
                     const userInfoResp = await axios({
                         method: 'GET',
                         url: 'https://api.github.com/user',
-                        headears: {
+                        headers: {
                             Authorization: `${token_type} ${access_token}`,
                         },
                     })
-                    console.log(userInfoResp)
                     ctx.session.userInfo = userInfoResp.data
                     ctx.redirect('/')
                 } else {
