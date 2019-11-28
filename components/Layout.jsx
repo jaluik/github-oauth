@@ -1,7 +1,20 @@
-import { useState, useCallback } from 'react'
-import { Button, Layout, Icon, Input, Avatar } from 'antd'
+import { useState, useCallback, useMemo } from 'react'
+import {
+    Layout,
+    Icon,
+    Input,
+    Avatar,
+    Tooltip,
+    DropdDropdown,
+    Menu,
+    Dropdown,
+} from 'antd'
+import { connect } from 'react-redux'
+import getConfig from 'next/config'
 import Container from './Container'
+
 const { Header, Content, Footer } = Layout
+const { publicRuntimeConfig } = getConfig()
 
 const githubIconStyle = {
     color: 'white',
@@ -14,7 +27,7 @@ const footerStyle = {
     textAlign: 'center',
 }
 
-export default ({ children }) => {
+const MyLayout = ({ children, user }) => {
     const [search, setSearch] = useState('')
     const handleSearchChange = useCallback(
         () => event => {
@@ -23,6 +36,14 @@ export default ({ children }) => {
         []
     )
     const handleOnSearch = useCallback(() => {}, [])
+    const userDropDown = useMemo(() => (
+        <Menu style={{ marginTop: 15, marginLeft: -5 }}>
+            <Menu.Item>
+                <a onClick={() => {}}>登 出</a>
+            </Menu.Item>
+        </Menu>
+    ))
+
     return (
         <Layout>
             <Header>
@@ -42,7 +63,25 @@ export default ({ children }) => {
                     </div>
                     <div className="header-right">
                         <div className="user">
-                            <Avatar size={40} icon={'user'} />
+                            {user && user.id ? (
+                                <Dropdown overlay={userDropDown}>
+                                    <a href="/">
+                                        <Avatar
+                                            size={40}
+                                            src={user.avatar_url}
+                                        />
+                                    </a>
+                                </Dropdown>
+                            ) : (
+                                <Tooltip
+                                    title="点击进行登录"
+                                    placement="bottom"
+                                >
+                                    <a href={publicRuntimeConfig.OAUTH_URL}>
+                                        <Avatar size={40} icon={'user'} />
+                                    </a>
+                                </Tooltip>
+                            )}
                         </div>
                     </div>
                 </Container>
@@ -83,3 +122,9 @@ export default ({ children }) => {
         </Layout>
     )
 }
+
+export default connect(function(state) {
+    return {
+        user: state.user,
+    }
+})(MyLayout)
