@@ -12,6 +12,9 @@ import {
 import { connect } from 'react-redux'
 import getConfig from 'next/config'
 import Container from './Container'
+import { logout } from '../store/store'
+import { withRouter } from 'next/router'
+import axios from 'axios'
 
 const { Header, Content, Footer } = Layout
 const { publicRuntimeConfig } = getConfig()
@@ -27,7 +30,7 @@ const footerStyle = {
     textAlign: 'center',
 }
 
-const MyLayout = ({ children, user }) => {
+const MyLayout = ({ children, user, logoutD, router }) => {
     const [search, setSearch] = useState('')
     const handleSearchChange = useCallback(
         () => event => {
@@ -36,10 +39,33 @@ const MyLayout = ({ children, user }) => {
         []
     )
     const handleOnSearch = useCallback(() => {}, [])
+    const handleLogout = useCallback(() => {
+        logoutD()
+    }, [logoutD])
+    const handleGoToOauth = useCallback(e => {
+        e.preventDefault()
+        axios({
+            url: '/prepare-auth',
+            params: {
+                url: router.asPath,
+            },
+            method: 'get',
+        })
+            .then(res => {
+                if (res.status === 200) {
+                    location.href = publicRuntimeConfig.OAUTH_URL
+                } else {
+                    console.log('prepare auth failed', res)
+                }
+            })
+            .catch(err => {
+                console.log('prepare auth failed', err)
+            })
+    }, [])
     const userDropDown = useMemo(() => (
         <Menu style={{ marginTop: 15, marginLeft: -5 }}>
             <Menu.Item>
-                <a onClick={() => {}}>登 出</a>
+                <a onClick={handleLogout}>登 出</a>
             </Menu.Item>
         </Menu>
     ))
@@ -77,7 +103,7 @@ const MyLayout = ({ children, user }) => {
                                     title="点击进行登录"
                                     placement="bottom"
                                 >
-                                    <a href={publicRuntimeConfig.OAUTH_URL}>
+                                    <a onClick={handleGoToOauth}>
                                         <Avatar size={40} icon={'user'} />
                                     </a>
                                 </Tooltip>
@@ -123,8 +149,17 @@ const MyLayout = ({ children, user }) => {
     )
 }
 
-export default connect(function(state) {
-    return {
-        user: state.user,
-    }
-})(MyLayout)
+export default withRouter(
+    connect(
+        function(state) {
+            return {
+                user: state.user,
+            }
+        },
+        function mapReducer(dispatch) {
+            return {
+                logoutD: () => dispatch(logout()),
+            }
+        }
+    )(MyLayout)
+)

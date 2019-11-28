@@ -2,7 +2,7 @@ const axios = require('axios')
 const config = require('../config')
 const { client_id, client_secret, request_token_url } = config.github
 module.exports = server => {
-    return server.use(async (ctx, next) => {
+    server.use(async (ctx, next) => {
         if (ctx.path === '/auth') {
             const code = ctx.query.code
             if (!code) {
@@ -37,12 +37,38 @@ module.exports = server => {
                         },
                     })
                     ctx.session.userInfo = userInfoResp.data
-                    ctx.redirect('/')
+                    ctx.redirect(
+                        (ctx.session && ctx.session.urlBeforeOAuth) || '/'
+                    )
+                    ctx.session && (ctx.session.urlBeforeOAuth = '')
                 } else {
                     const errorMsg = result.data && result.data.error
                     ctx.body = `request token failed ${errorMsg}`
                 }
             }
+        } else {
+            await next()
+        }
+    })
+
+    server.use(async (ctx, next) => {
+        const path = ctx.path
+        const method = ctx.method
+        if (path === '/logout' && method === 'POST') {
+            ctx.session = null
+            ctx.body = 'logout success'
+        } else {
+            await next()
+        }
+    })
+
+    server.use(async (ctx, next) => {
+        const path = ctx.path
+        const method = ctx.method
+        if (path === '/prepare-auth' && method === 'GET') {
+            const { url } = ctx.query
+            ctx.body = 'ready'
+            ctx.session.urlBeforeOAuth = url
         } else {
             await next()
         }

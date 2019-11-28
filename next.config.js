@@ -49,12 +49,9 @@ if (typeof require !== undefined) {
     require.extensions['.css'] = file => {}
 }
 
-const GITHUB_OAUTH_URL = 'https://github.com/login/oauth/authorize'
-const SCOPE = 'user'
-
 module.exports = WithCss({
     publicRuntimeConfig: {
-        GITHUB_OAUTH_URL,
-        OAUTH_URL: `${GITHUB_OAUTH_URL}?client_id=${myConfig.github.client_id}&scope=${SCOPE}`,
+        GITHUB_OAUTH_URL: myConfig.GITHUB_OAUTH_URL,
+        OAUTH_URL: myConfig.GITHUB_OAUTH_URL,
     },
 })
