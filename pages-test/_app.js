@@ -25,7 +25,8 @@ class MyApp extends App {
             <>
                 <Provider store={reduxStore}>
                     <Layout>
-                        <Component {...pageProps} />
+                        <h1>{this.props.title}</h1>
+                        <Component {...pageProps} a={a} />
                     </Layout>
                 </Provider>
             </>
