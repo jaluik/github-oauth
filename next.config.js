@@ -34,7 +34,7 @@ const config = {
         customKey: 'value',
     },
     // 下面两个要通过'next/config'来读取
-    // 只有在服务器渲染时才会获取的配置
+    // 只有在服务器渲染时才会获取的配置信息
     serverRuntimeConfig: {
         mySecret: 'secret',
         secondSecret: process.env.SECOND_SECRET,
@@ -48,7 +48,6 @@ const config = {
 if (typeof require !== undefined) {
     require.extensions['.css'] = file => {}
 }
-
 module.exports = WithCss({
     publicRuntimeConfig: {
         GITHUB_OAUTH_URL: myConfig.GITHUB_OAUTH_URL,
