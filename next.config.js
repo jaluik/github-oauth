@@ -52,6 +52,6 @@ if (typeof require !== undefined) {
 module.exports = WithCss({
     publicRuntimeConfig: {
         GITHUB_OAUTH_URL: myConfig.GITHUB_OAUTH_URL,
-        OAUTH_URL: myConfig.GITHUB_OAUTH_URL,
+        OAUTH_URL: myConfig.OAUTH_URL,
     },
 })
