@@ -39,7 +39,7 @@ const config = {
         mySecret: 'secret',
         secondSecret: process.env.SECOND_SECRET,
     },
-    //在服务器端渲染和客户端渲染都可获取的配置
+    //在服务器端渲染和客户端渲染都可以获取的配置
     publicRuntimeConfig: {
         staticFolder: '/static',
     },
