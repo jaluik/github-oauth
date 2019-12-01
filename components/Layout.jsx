@@ -1,20 +1,12 @@
 import { useState, useCallback, useMemo } from 'react'
-import {
-    Layout,
-    Icon,
-    Input,
-    Avatar,
-    Tooltip,
-    DropdDropdown,
-    Menu,
-    Dropdown,
-} from 'antd'
+import { Layout, Icon, Input, Avatar, Tooltip, Menu, Dropdown } from 'antd'
 import { connect } from 'react-redux'
 import getConfig from 'next/config'
 import Container from './Container'
 import { logout } from '../store/store'
 import { withRouter } from 'next/router'
 import axios from 'axios'
+import Link from 'next/link'
 
 const { Header, Content, Footer } = Layout
 const { publicRuntimeConfig } = getConfig()
@@ -31,14 +23,15 @@ const footerStyle = {
 }
 
 const MyLayout = ({ children, user, logoutD, router }) => {
-    const [search, setSearch] = useState('')
-    const handleSearchChange = useCallback(
-        () => event => {
-            setSearch(event.target.value)
-        },
-        []
-    )
-    const handleOnSearch = useCallback(() => {}, [])
+    const urlQuery = router.query && router.query.query
+    const [search, setSearch] = useState(urlQuery)
+    const handleSearchChange = useCallback(e => {
+        setSearch(e.target.value)
+    }, [])
+    const handleOnSearch = useCallback(() => {
+        router.push(`/search?query=${search}`)
+    }, [search])
+
     const handleLogout = useCallback(() => {
         logoutD()
     }, [logoutD])
@@ -76,7 +69,9 @@ const MyLayout = ({ children, user, logoutD, router }) => {
                 <Container renderer={<div className="header-inner"></div>}>
                     <div className="header-left">
                         <div className="logo">
-                            <Icon type="github" style={githubIconStyle} />
+                            <Link href="/">
+                                <Icon type="github" style={githubIconStyle} />
+                            </Link>
                         </div>
                         <div>
                             <Input.Search
@@ -137,11 +132,14 @@ const MyLayout = ({ children, user, logoutD, router }) => {
                         height: 100%;
                     }
                     .ant-layout {
-                        height: 100%;
+                        min-height: 100%;
                     }
                     .ant-layout-header {
                         padding-left: 0px;
                         padding-right: 0px;
+                    }
+                    .ant-layout-content {
+                        background: #fff;
                     }
                 `}
             </style>

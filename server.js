@@ -1,6 +1,7 @@
 const Koa = require('koa')
 const next = require('next')
 const Router = require('koa-router')
+const koaBody = require('koa-body')
 const session = require('koa-session')
 const RedisSessionStore = require('./server/session-store')
 const Redis = require('ioredis')
@@ -19,6 +20,7 @@ app.prepare().then(() => {
     const router = new Router()
 
     server.keys = ['jaluik is using github oauth']
+    server.use(koaBody())
     const SESSION_CONFIG = {
         key: 'jid',
         store: new RedisSessionStore(redis),

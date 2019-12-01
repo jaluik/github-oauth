@@ -20,6 +20,7 @@
     "babel-plugin-styled-components": "^1.10.6",
     "ioredis": "^4.14.1",
     "koa": "^2.11.0",
+    "koa-body": "^4.1.1",
     "koa-router": "^7.4.0",
     "koa-session": "^5.12.3",
     "moment": "^2.24.0",
