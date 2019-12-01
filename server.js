@@ -5,6 +5,7 @@ const session = require('koa-session')
 const RedisSessionStore = require('./server/session-store')
 const Redis = require('ioredis')
 const auth = require('./server/auth')
+const api = require('./server/api')
 
 const dev = process.env.NODE_PAHT !== 'production'
 const app = next({ dev })
@@ -26,6 +27,7 @@ app.prepare().then(() => {
     server.use(session(SESSION_CONFIG, server))
     // 配置处理github-oauth登录
     auth(server)
+    api(server)
 
     server.use(async (ctx, next) => {
         //     // console.log(ctx.cookies.get('id'))
