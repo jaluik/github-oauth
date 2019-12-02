@@ -1,11 +1,20 @@
 import { Button, Icon, Tabs } from 'antd'
+import { useEffect } from 'react'
 import getConfig from 'next/config'
 import { connect } from 'react-redux'
 import Router, { withRouter } from 'next/router'
 import Repo from '../components/Repo'
+import LRU from 'lru-cache'
 
 const api = require('../lib/api')
+const cache = new LRU({
+    maxAge: 1000 * 60 * 10,
+})
 const { publicRuntimeConfig } = getConfig()
+
+let cachedUserRepos, cachedUserStarredRepos
+const isServer = typeof window === 'undefined'
+
 const Index = ({ userRepos, userStarredRepos, user, router }) => {
     const tabKey = router.query.key || '1'
 
@@ -13,6 +22,18 @@ const Index = ({ userRepos, userStarredRepos, user, router }) => {
         Router.push(`/?key=${key}`)
     }
 
+    useEffect(() => {
+        if (!isServer) {
+            // cachedUserRepos = userRepos
+            // cachedUserStarredRepos = userStarredRepos
+            if (userRepos) {
+                cache.set('userRepos', userRepos)
+            }
+            if (userStarredRepos) {
+                cache.set('userStarredRepos', userStarredRepos)
+            }
+        }
+    }, [userRepos, userStarredRepos])
     if (!user || !user.id) {
         return (
             <div className="root">
@@ -57,14 +78,14 @@ const Index = ({ userRepos, userStarredRepos, user, router }) => {
                     <Tabs.TabPane tab="你的仓库" key="1">
                         <div classNmae="user-repos">
                             {userRepos.map(repo => {
-                                return <Repo repo={repo} />
+                                return <Repo key={repo.id} repo={repo} />
                             })}
                         </div>
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="你关注的仓库" key="2">
                         <div classNmae="user-repos">
                             {userStarredRepos.map(repo => {
-                                return <Repo repo={repo} />
+                                return <Repo key={repo.id} repo={repo} />
                             })}
                         </div>
                     </Tabs.TabPane>
@@ -114,6 +135,15 @@ Index.getInitialProps = async ({ ctx, reduxStore }) => {
     if (!user || !user.id) {
         return {
             isLogin: false,
+        }
+    }
+    if (!isServer) {
+        // if (cachedUserRepos && cachedUserStarredRepos) {
+        if (cache.get('userRepos') && cache.get('userStarredRepos')) {
+            return {
+                userRepos: cache.get('userRepos'),
+                userStarredRepos: cache.get('userStarredRepos'),
+            }
         }
     }
     const result = await Promise.all([
