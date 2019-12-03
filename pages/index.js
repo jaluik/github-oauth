@@ -69,21 +69,21 @@ const Index = ({ userRepos, userStarredRepos, user, router }) => {
                     <a href={`mailto: ${user.email}`}>{user.email}</a>
                 </p>
             </div>
-            <div classNmae="user-repos">
+            <div className="user-repos">
                 <Tabs
                     activeKey={tabKey}
                     onChange={handleTabChange}
                     animated={false}
                 >
                     <Tabs.TabPane tab="你的仓库" key="1">
-                        <div classNmae="user-repos">
+                        <div className="user-repos">
                             {userRepos.map(repo => {
                                 return <Repo key={repo.id} repo={repo} />
                             })}
                         </div>
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="你关注的仓库" key="2">
-                        <div classNmae="user-repos">
+                        <div className="user-repos">
                             {userStarredRepos.map(repo => {
                                 return <Repo key={repo.id} repo={repo} />
                             })}
