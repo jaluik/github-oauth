@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { withRouter } from 'next/router'
 import { Row, Col, List } from 'antd'
 import Link from 'next/link'
@@ -43,33 +44,23 @@ const selectedItemStyle = {
     fontWeight: 100,
 }
 
+const FilterLink = memo(({ name, query, lang, sort, order }) => {
+    let queryString = `?query=${query}`
+    if (lang) queryString += `&lang=${lang}`
+    if (sort) queryString += `&sort=${sort}&order=${order || 'desc'}`
+    return (
+        <Link href={`/search${queryString}`}>
+            <a>{name}</a>
+        </Link>
+    )
+})
+
 const Search = ({ router, repos }) => {
     console.log(repos)
 
-    const { sort, order, lang, query } = router.query
+    const { ...querys } = router.query
+    const { lang, sort, order } = router.query
 
-    const handleLanguageChange = language => {
-        Router.push({
-            pathname: '/search',
-            query: {
-                query,
-                lang: language,
-                sort,
-                order,
-            },
-        })
-    }
-    const handleSortChange = sort => {
-        Router.push({
-            pathname: '/search',
-            query: {
-                query,
-                lang,
-                sort: sort.value,
-                order: sort.order,
-            },
-        })
-    }
     return (
         <div className="root">
             <Row gutter={20}>
@@ -86,13 +77,15 @@ const Search = ({ router, repos }) => {
                                 <List.Item
                                     style={selected ? selectedItemStyle : null}
                                 >
-                                    <a
-                                        onClick={() =>
-                                            handleLanguageChange(item)
-                                        }
-                                    >
-                                        {item}
-                                    </a>
+                                    {selected ? (
+                                        <span>{item}</span>
+                                    ) : (
+                                        <FilterLink
+                                            {...querys}
+                                            lang={item}
+                                            name={item}
+                                        />
+                                    )}
                                 </List.Item>
                             )
                         }}
@@ -115,15 +108,31 @@ const Search = ({ router, repos }) => {
                                 <List.Item
                                     style={selected ? selectedItemStyle : null}
                                 >
-                                    <a onClick={() => handleSortChange(item)}>
-                                        {item.name}
-                                    </a>
+                                    {selected ? (
+                                        <span>{item.name}</span>
+                                    ) : (
+                                        <FilterLink
+                                            {...querys}
+                                            sort={item.value || ''}
+                                            order={item.order || ''}
+                                            name={item.name}
+                                        />
+                                    )}
                                 </List.Item>
                             )
                         }}
                     />
                 </Col>
             </Row>
+            <style jsx>{`
+                .root {
+                    padding: 20px 0;
+                }
+                .list-header {
+                    font-weight: 800;
+                    font-size: 16px;
+                }
+            `}</style>
         </div>
     )
 }
