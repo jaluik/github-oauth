@@ -1,6 +1,7 @@
 import { withRouter } from 'next/router'
 import { Row, Col, List } from 'antd'
 import Link from 'next/link'
+import Router from 'next/router'
 const api = require('../lib/api')
 
 const LANGUAGE = ['JavaScript', 'HTML', 'CSS', 'TypeScript', 'Java', 'Rust']
@@ -37,8 +38,38 @@ const SORT_TYPES = [
  * page: 分页页面
  */
 
+const selectedItemStyle = {
+    borderLeft: '2px solid #e36209',
+    fontWeight: 100,
+}
+
 const Search = ({ router, repos }) => {
     console.log(repos)
+
+    const { sort, order, lang, query } = router.query
+
+    const handleLanguageChange = language => {
+        Router.push({
+            pathname: '/search',
+            query: {
+                query,
+                lang: language,
+                sort,
+                order,
+            },
+        })
+    }
+    const handleSortChange = sort => {
+        Router.push({
+            pathname: '/search',
+            query: {
+                query,
+                lang,
+                sort: sort.value,
+                order: sort.order,
+            },
+        })
+    }
     return (
         <div className="root">
             <Row gutter={20}>
@@ -49,11 +80,19 @@ const Search = ({ router, repos }) => {
                         style={{ marginBottom: 20 }}
                         dataSource={LANGUAGE}
                         renderItem={item => {
+                            const selected = lang === item
+
                             return (
-                                <List.Item>
-                                    <Link href="/search">
-                                        <a>{item}</a>
-                                    </Link>
+                                <List.Item
+                                    style={selected ? selectedItemStyle : null}
+                                >
+                                    <a
+                                        onClick={() =>
+                                            handleLanguageChange(item)
+                                        }
+                                    >
+                                        {item}
+                                    </a>
                                 </List.Item>
                             )
                         }}
@@ -63,11 +102,22 @@ const Search = ({ router, repos }) => {
                         header={<span className="list-header">排序</span>}
                         dataSource={SORT_TYPES}
                         renderItem={item => {
+                            let selected = false
+                            if (item.name === 'Best Match' && !sort) {
+                                selected = true
+                            } else if (
+                                item.value === sort &&
+                                item.order === order
+                            ) {
+                                selected = true
+                            }
                             return (
-                                <List.Item>
-                                    <Link href="/search">
-                                        <a>{item.name}</a>
-                                    </Link>
+                                <List.Item
+                                    style={selected ? selectedItemStyle : null}
+                                >
+                                    <a onClick={() => handleSortChange(item)}>
+                                        {item.name}
+                                    </a>
                                 </List.Item>
                             )
                         }}
