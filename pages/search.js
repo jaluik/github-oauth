@@ -140,7 +140,7 @@ const Search = ({ router, repos }) => {
                     <div className="pagination">
                         <Pagination
                             current={Number(page) || 1}
-                            total={repos.total_count}
+                            total={Math.min(repos.total_count, 1000)}
                             onChange={noop}
                             pageSize={30}
                             itemRender={(page, type, ol) => {
