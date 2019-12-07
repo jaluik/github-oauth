@@ -5,6 +5,8 @@ const koaBody = require('koa-body')
 const session = require('koa-session')
 const RedisSessionStore = require('./server/session-store')
 const Redis = require('ioredis')
+const atob = require('atob')
+
 const auth = require('./server/auth')
 const api = require('./server/api')
 
@@ -14,6 +16,8 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 const redis = new Redis()
+
+global.atob = atob
 
 app.prepare().then(() => {
     const server = new Koa()

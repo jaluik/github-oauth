@@ -73,9 +73,9 @@ const Search = ({ router, repos }) => {
 
     useEffect(() => {
         if (!isServer) {
-            cacheArray(repos)
+            cacheArray(repos.items)
         }
-    }, [repos])
+    }, [])
 
     return (
         <div className="root">
