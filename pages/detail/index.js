@@ -1,18 +1,10 @@
 import withRepoBasic from '../../components/WithRepoBasic'
 import api from '../../lib/api'
-import MarkdownIt from 'markdown-it'
-import 'github-markdown-css'
 
-const md = new MarkdownIt()
+import MDRenderer from '../../components/MarkdownRenderer'
 
 const Detail = ({ readme }) => {
-    const content = atob(readme.content)
-    const html = md.render(content)
-    return (
-        <div className="markdown-body">
-            <div dangerouslySetInnerHTML={{ __html: html }}></div>
-        </div>
-    )
+    return <MDRenderer content={readme.content} isBase64 />
 }
 
 Detail.getInitialProps = async ({
