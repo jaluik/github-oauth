@@ -1,5 +1,7 @@
+const webpack = require('webpack')
 const WithCss = require('@zeit/next-css')
 const myConfig = require('./config')
+const withBundleAnalyzer = require('@zeit/next-bundle-analyzer')
 
 const config = {
     //输出文件的路由生成Etag
@@ -48,9 +50,30 @@ const config = {
 if (typeof require !== undefined) {
     require.extensions['.css'] = file => {}
 }
-module.exports = WithCss({
-    publicRuntimeConfig: {
-        GITHUB_OAUTH_URL: myConfig.GITHUB_OAUTH_URL,
-        OAUTH_URL: myConfig.OAUTH_URL,
-    },
-})
+module.exports = withBundleAnalyzer(
+    WithCss({
+        webpack(config) {
+            config.plugins.push(
+                new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+            )
+            return config
+        },
+        publicRuntimeConfig: {
+            GITHUB_OAUTH_URL: myConfig.GITHUB_OAUTH_URL,
+            OAUTH_URL: myConfig.OAUTH_URL,
+        },
+        analyzeBrowser: ['browser', 'both'].includes(
+            process.env.BUNDLE_ANALYZE
+        ),
+        bundleAnalyzerConfig: {
+            server: {
+                analyzerMode: 'static',
+                reportFilename: '../bundles/server.html',
+            },
+            browser: {
+                analyzerMode: 'static',
+                reportFilename: '../bundles/client.html',
+            },
+        },
+    })
+)
