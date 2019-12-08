@@ -2,6 +2,34 @@ import { useState, useCallback } from 'react'
 import withRepoBasic from '../../components/WithRepoBasic'
 import api from '../../lib/api'
 import { Avatar, Button } from 'antd'
+import dynamic from 'next/dynamic'
+import { getLastUpdates } from '../../lib/utils'
+
+const MDRenderer = dynamic(() => import('../../components/MarkdownRenderer'))
+
+function IssueDetail({ issue }) {
+    return (
+        <div className="root">
+            <MDRenderer content={issue.body} />
+            <div className="actions">
+                <Button href={issue.html_url} target="_black">
+                    打开Issue讨论界面
+                </Button>
+            </div>
+            <style jsx>
+                {`
+                    .root {
+                        background: #fafafa;
+                        padding: 20px;
+                    }
+                    .actions {
+                        text-align: right;
+                    }
+                `}
+            </style>
+        </div>
+    )
+}
 
 function IssueItem({ issue }) {
     const [showDetal, setShowDetail] = useState(false)
@@ -9,55 +37,65 @@ function IssueItem({ issue }) {
         setShowDetail(detail => !detail)
     }, [])
     return (
-        <div className="issue">
-            <Button
-                type="primary"
-                size="small"
-                style={{ position: 'absolute', right: 10, top: 10 }}
-                onClick={toggleShowDetail}
-            >
-                {showDetal ? '查看' : '隐藏'}
-            </Button>
-            <div className="avatar">
-                <Avatar src={issue.user.avatar_url} shape="square" size={50} />
+        <div>
+            <div className="issue">
+                <Button
+                    type="primary"
+                    size="small"
+                    style={{ position: 'absolute', right: 10, top: 10 }}
+                    onClick={toggleShowDetail}
+                >
+                    {showDetal ? '查看' : '隐藏'}
+                </Button>
+                <div className="avatar">
+                    <Avatar
+                        src={issue.user.avatar_url}
+                        shape="square"
+                        size={50}
+                    />
+                </div>
+                <div className="main-info">
+                    <h6>
+                        <span>{issue.title}</span>
+                    </h6>
+                    <p className="sub-info">
+                        <span>
+                            Updated at {getLastUpdates(issue.updated_at)}
+                        </span>
+                    </p>
+                </div>
+
+                <style jsx>{`
+                    .issue {
+                        display: flex;
+                        position: relative;
+                        padding: 10px;
+                    }
+                    .issue:hover {
+                        background: #fafafa;
+                    }
+                    .issue + .issue {
+                        border-top: 1px solid #eee;
+                    }
+                    .main-info > h6 {
+                        max-width: 600px;
+                        font-size: 16px;
+                        padding-right: 40px;
+                    }
+                    .avatar {
+                        margin-right: 20px;
+                    }
+                    .sub-info {
+                        margin-bottom: 0;
+                    }
+                    .subinfo > span + span {
+                        display: inline-block;
+                        margin-left: 20px;
+                        font-size: 12px;
+                    }
+                `}</style>
             </div>
-            <div className="main-info">
-                <h6>
-                    <span>{issue.title}</span>
-                </h6>
-                <p className="sub-info">
-                    <span>Updated at {issue.updated_at}</span>
-                </p>
-            </div>
-            <style jsx>{`
-                .issue {
-                    display: flex;
-                    position: relative;
-                    padding: 10px;
-                }
-                .issue:hover {
-                    background: #fafafa;
-                }
-                .issue + .issue {
-                    border-top: 1px solid #eee;
-                }
-                .main-info > h6 {
-                    max-width: 600px;
-                    font-size: 16px;
-                    padding-right: 40px;
-                }
-                .avatar {
-                    margin-right: 20px;
-                }
-                .sub-info {
-                    margin-bottom: 0;
-                }
-                .subinfo > span + span {
-                    display: inline-block;
-                    margin-left: 20px;
-                    font-size: 12px;
-                }
-            `}</style>
+            {!showDetal ? <IssueDetail issue={issue} /> : null}
         </div>
     )
 }
