@@ -4,6 +4,7 @@ import api from '../../lib/api'
 import { Avatar, Button } from 'antd'
 import dynamic from 'next/dynamic'
 import { getLastUpdates } from '../../lib/utils'
+import SearchUser from '../../components/SearchUser'
 
 const MDRenderer = dynamic(() => import('../../components/MarkdownRenderer'))
 
@@ -45,7 +46,7 @@ function IssueItem({ issue }) {
                     style={{ position: 'absolute', right: 10, top: 10 }}
                     onClick={toggleShowDetail}
                 >
-                    {showDetal ? '查看' : '隐藏'}
+                    {showDetal ? '隐藏' : '查看'}
                 </Button>
                 <div className="avatar">
                     <Avatar
@@ -95,15 +96,19 @@ function IssueItem({ issue }) {
                     }
                 `}</style>
             </div>
-            {!showDetal ? <IssueDetail issue={issue} /> : null}
+            {showDetal ? <IssueDetail issue={issue} /> : null}
         </div>
     )
 }
 
 const Issues = ({ issues }) => {
-    console.log(issues)
+    const [creator, setCreator] = useState()
+    const handleCreatorChange = useCallback(value => {
+        setCreator(value)
+    }, [])
     return (
         <div className="root">
+            <SearchUser onChange={handleCreatorChange} value={creator} />
             <div className="issues">
                 {issues.map(issue => (
                     <IssueItem issue={issue} key={issue.id} />
