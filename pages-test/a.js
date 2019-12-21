@@ -19,7 +19,7 @@ const A = ({ router, name, a, time }) => (
         <style jsx>
             {`
                 a {
-                    color: blue;
+                    color: red;
                 }
                 .link {
                     font-size: 25px;
