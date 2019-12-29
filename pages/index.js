@@ -25,8 +25,6 @@ const Index = ({ userRepos, userStarredRepos, user, router }) => {
 
     useEffect(() => {
         if (!isServer) {
-            // cachedUserRepos = userRepos
-            // cachedUserStarredRepos = userStarredRepos
             if (userRepos) {
                 cache.set('userRepos', userRepos)
             }
